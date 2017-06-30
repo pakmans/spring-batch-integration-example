@@ -2,6 +2,10 @@ package net.oldgeek;
 
 import java.io.File;
 
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.integration.launch.JobLaunchingMessageHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
@@ -16,8 +20,29 @@ import org.springframework.integration.file.filters.SimplePatternFileListFilter;
 @Configuration
 public class IntegrationConfig {
 
+	@Autowired
+	private JobLauncher jobLauncher;
+
+	@Autowired
+	private Job sampleJob;
+
 	protected DirectChannel inputChannel() {
 		return new DirectChannel();
+	}
+
+	@Bean
+	public IntegrationFlow sampleFlow() {
+		// @formatter:off
+		return IntegrationFlows //
+				.from(fileReadingMessageSource(), c -> c.poller(Pollers.fixedDelay(5000)))//
+				.channel(inputChannel()) //
+				.transform(fileMessageToJobRequest()) //
+				.handle(jobLaunchingMessageHandler()) //
+				.handle(jobExecution -> {
+					System.out.println(jobExecution.getPayload());
+				}) //
+				.get();
+		// @formatter:on
 	}
 
 	@Bean
@@ -31,13 +56,23 @@ public class IntegrationConfig {
 	}
 
 	@Bean
-	public IntegrationFlow integrationFlow() {
-		// @formatter:off
-		return IntegrationFlows //
-				.from(fileReadingMessageSource(), c -> c.poller(Pollers.fixedDelay(5000)))//
-				.channel(inputChannel()) //
-				.handle(f -> System.out.println("Done.")) //
-				.get();
-		// @formatter:on
+	FileMessageToJobRequest fileMessageToJobRequest() {
+		FileMessageToJobRequest transformer = new FileMessageToJobRequest();
+		transformer.setJob(sampleJob);
+		transformer.setFileParameterName("file_path");
+		return transformer;
 	}
+
+	@Bean
+	JobLaunchingMessageHandler jobLaunchingMessageHandler() {
+		JobLaunchingMessageHandler handler = new JobLaunchingMessageHandler(jobLauncher);
+		return handler;
+	}
+
+	// @Bean
+	// JobLaunchingGateway jobLaunchingGateway() {
+	// JobLaunchingGateway gateway = new JobLaunchingGateway(jobLauncher);
+	// return gateway;
+	// }
+
 }
