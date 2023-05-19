@@ -23,3 +23,5 @@ http://docs.spring.io/spring-integration/docs/4.3.10.RELEASE/reference/html/
 https://github.com/spring-projects/spring-integration-java-dsl/wiki/spring-integration-java-dsl-reference
 
 https://github.com/mminella/SpringBatchWebinar
+
+Note: This project is not running in JRE 17 (likely version conflict : IllegalStateException: ApplicationEventMulticaster not initialized), run it in JRE 11 instead while a fix is not found.
