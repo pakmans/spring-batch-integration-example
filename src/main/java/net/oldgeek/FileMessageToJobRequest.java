@@ -24,14 +24,16 @@ public class FileMessageToJobRequest {
 		this.job = job;
 	}
 
-	@Transformer
+	@Transformer// inputChannel and outputChannel setup in sampleFlow Bean (check IntegrationConfig.class)
 	public JobLaunchRequest toRequest(Message<File> message) {
 		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 
 		jobParametersBuilder.addString(fileParameterName, message.getPayload().getAbsolutePath());
-		// We add a dummy value to make job params unique, or else spring batch
+		// TODO: I do not know hot fix this yet, but not supposed to 
+		// have to add a dummy value to make job params unique, or else spring batch
 		// will only run it the first time
-		jobParametersBuilder.addDate("dummy", new Date());
+		// Suppose there must be some default we need to change to allow multiple jobs executions with the same parameters
+		jobParametersBuilder.addDate("timestamp", new Date());
 
 		return new JobLaunchRequest(job, jobParametersBuilder.toJobParameters());
 	}

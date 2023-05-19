@@ -12,7 +12,7 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.core.Pollers;
+import org.springframework.integration.dsl.Pollers; // newer Spring Batch versions
 import org.springframework.integration.file.FileReadingMessageSource;
 import org.springframework.integration.file.FileReadingMessageSource.WatchEventType;
 import org.springframework.integration.file.filters.SimplePatternFileListFilter;
@@ -29,6 +29,10 @@ public class IntegrationConfig {
 	protected DirectChannel inputChannel() {
 		return new DirectChannel();
 	}
+	
+	protected DirectChannel outputChannel() {
+		return new DirectChannel();
+	}
 
 	@Bean
 	public IntegrationFlow sampleFlow() {
@@ -37,6 +41,7 @@ public class IntegrationConfig {
 				.from(fileReadingMessageSource(), c -> c.poller(Pollers.fixedDelay(5000)))//
 				.channel(inputChannel()) //
 				.transform(fileMessageToJobRequest()) //
+				.channel(outputChannel())
 				.handle(jobLaunchingMessageHandler()) //
 				.handle(jobExecution -> {
 					System.out.println(jobExecution.getPayload());

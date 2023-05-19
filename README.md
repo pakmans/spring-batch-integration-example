@@ -16,9 +16,9 @@ result.
 
 Relevant resources:
 
-http://docs.spring.io/spring-batch/3.0.x/reference/html/springBatchIntegration.html
+https://docs.spring.io/spring-batch/docs/4.3.8/reference/html/spring-batch-integration.html
 
-http://docs.spring.io/spring-integration/docs/4.3.10.RELEASE/reference/html/
+http://docs.spring.io/spring-integration/docs/5.5.18/reference/html/
 
 https://github.com/spring-projects/spring-integration-java-dsl/wiki/spring-integration-java-dsl-reference
 

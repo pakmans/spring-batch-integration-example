@@ -1,9 +1,9 @@
 package net.oldgeek;
 
-import java.util.Date;
-
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -24,10 +24,9 @@ public class BatchTests {
 	public void testSampleJob() throws Exception {
 		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 		jobParametersBuilder.addString("file_path", "src/test/resources/sample.txt");
-		// We add a dummy value to make job params unique, or else spring batch
-		// will only run it the first time
-		jobParametersBuilder.addDate("dummy", new Date());
+
 		JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParametersBuilder.toJobParameters());
 		System.out.println(jobExecution.getExitStatus());
+		assertEquals(jobExecution.getExitStatus(), ExitStatus.COMPLETED);
 	}
 }

@@ -29,7 +29,7 @@ public class BatchConfig {
 	Step sampleStep() {
 		return stepBuilderFactory.get("sampleStep")//
 				.<String, String>chunk(5) //
-				.reader(itemReader(null)) //
+				.reader(itemReader(null)) // null will be replaced by #{jobParameters[file_path]}
 				.writer(i -> i.stream().forEach(j -> System.out.println(j))) //
 				.build();
 	}
